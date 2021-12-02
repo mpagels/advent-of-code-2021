@@ -2,7 +2,10 @@ import fetchDataForDay from '../services/getData.js'
 
 async function main() {
   // setup
-  const depthMeasurements = await fetchDataForDay(1)
+  const listOfData = await fetchDataForDay(1)
+  const depthMeasurements = listOfData
+    .split('\n')
+    .map((number) => Number(number))
   const REDUCERSTART = { previousMeasurement: 0, largerCount: 0 }
 
   // first exercise

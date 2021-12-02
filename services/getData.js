@@ -14,6 +14,5 @@ export default async function getData(day) {
       },
     }
   )
-  const listOfData = await response.text()
-  return listOfData.split('\n').map((number) => Number(number))
+  return await response.text()
 }
