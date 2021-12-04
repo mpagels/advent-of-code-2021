@@ -4,13 +4,6 @@ import { promises as fs } from 'fs'
 async function main() {
   // setup
 
-  //   let test = await fs.readFile('day4.txt', 'utf8')
-  //   const positionTest = test
-  //     .trim()
-  //     .split('\n')
-  //     .map((data) => data)
-  //   const drawnNumbersTest = positionTest[0].split(',').map(Number)
-
   const listOfData = await fetchDataForDay(4)
   const positions = listOfData.split('\n').map((data) => data)
   const drawnNumbers = positions[0].split(',').map(Number)
