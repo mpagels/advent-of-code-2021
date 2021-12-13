@@ -24,8 +24,9 @@ fold along x=5
 `
 
 async function main() {
+  // setup
+
   const listOfData = await fetchDataForDay(13)
-  console.log(listOfData)
 
   const foldInstructions = listOfData
     .split('\n')
@@ -33,7 +34,6 @@ async function main() {
     .slice(0, -1)
     .map((instructions) => instructions.split(' ')[2].split('='))
 
-  console.log(foldInstructions)
   const coordinates = listOfData
     .split('\n')
     .slice(0, -13)
@@ -43,7 +43,7 @@ async function main() {
   const x = Math.max(...coordinates.map((coord) => coord[0]))
   const y = Math.max(...coordinates.map((coord) => coord[1]))
 
-  const matrix = Array(y + 1)
+  let matrix = Array(y + 1)
 
   for (let i = 0; i <= y; i++) {
     matrix[i] = Array(x + 1).fill('.')
@@ -56,20 +56,7 @@ async function main() {
     matrix[y1][x1] = '#'
   }
 
-  /* const foldY =  foldInstructions[0][1]
-
-  const aboveFold = matrix.filter((_, index) => index < 7)
-  const downFold = matrix.filter((_, index) => index > 7).reverse()
-
-  for (let i = downFold.length - 1; i >= 0; i--) {
-    const line = aboveFold.length - 1 - (downFold.length - 1 - i)
-    downFold[i].forEach((dot, index) => {
-      if (dot === '#') {
-        aboveFold[line][index] = dot
-      }
-    })
-  }
- */
+  // exercise 1
 
   const foldX = 655
 
@@ -80,9 +67,6 @@ async function main() {
   const rightFold = matrix.map((line) =>
     line.filter((_, index) => index > foldX).reverse()
   )
-  /* 
-console.log('left', leftFold)
-console.log('right', rightFold) */
 
   rightFold.forEach((line, LineIndex) => {
     for (let i = line.length; i >= 0; i--) {
@@ -108,6 +92,87 @@ console.log('right', rightFold) */
   console.log(
     'How many dots are visible after completing just the first fold instruction on your transparent paper:',
     result
+  )
+
+  // exercise 2
+
+  function horizontalYFold(lineToFoldY) {
+    const foldY = lineToFoldY
+    const aboveFold = matrix.filter((_, index) => index < foldY)
+    const downFold = matrix.filter((_, index) => index > foldY).reverse()
+
+    for (let i = downFold.length - 1; i >= 0; i--) {
+      const line = aboveFold.length - 1 - (downFold.length - 1 - i)
+      downFold[i].forEach((dot, index) => {
+        if (dot === '#') {
+          aboveFold[line][index] = dot
+        }
+      })
+    }
+
+    matrix.length = 0
+    matrix = [...aboveFold]
+  }
+
+  function verticalXFold(lineToFoldX) {
+    const foldX = lineToFoldX
+
+    const leftFold = matrix.map((line) =>
+      line.filter((_, index) => index < foldX)
+    )
+
+    const rightFold = matrix.map((line) =>
+      line.filter((_, index) => index > foldX).reverse()
+    )
+
+    rightFold.forEach((line, LineIndex) => {
+      for (let i = line.length; i >= 0; i--) {
+        line.forEach((dot, index) => {
+          const position =
+            leftFold[LineIndex].length - 1 - (line.length - 1 - index)
+          if (dot === '#') {
+            leftFold[LineIndex][position] = dot
+          }
+        })
+      }
+    })
+
+    matrix.length = 0
+    matrix = [...leftFold]
+  }
+
+  foldInstructions.forEach((instruction) => {
+    if (instruction[0] === 'x') {
+      verticalXFold(instruction[1])
+    } else {
+      horizontalYFold(instruction[1])
+    }
+  })
+
+  const result2 = { '#': 0 }
+  matrix.forEach((line) => {
+    line.forEach((dot) => {
+      if (dot === '#') {
+        result2[dot]++
+      }
+    })
+  })
+
+  console.log(
+    'What code do you use to activate the infrared thermal imaging camera system?:'
+  )
+  matrix.forEach((line) =>
+    console.log(
+      line
+        .map((char) => {
+          if (char === '.') {
+            return ' '
+          } else {
+            return char
+          }
+        })
+        .join('')
+    )
   )
 }
 main()
